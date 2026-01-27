@@ -95,7 +95,7 @@ sudo systemctl status ollama --no-pager > ~/hp-z800-ai-agent/logs/ollama-status.
 
 ```bash
 # Vérifier qu'Ollama écoute sur le port 11434
-sudo netstat -tlnp | grep ollama
+sudo ss -tlnp | grep ollama
 ```
 
 **✅ Résultat attendu :**
