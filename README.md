@@ -1,14 +1,57 @@
 # hp-z800-ai-agent
 
-🤖 Stack LLM complète sur HP Z800 : Ollama + Open WebUI + RAG + Fine-tuning
-
 ## 🎯 Objectif du Projet
+# hp-z800-ai-agent
 
-Transformer le HP Z800 en serveur d'IA local avec :
-- **Chatbot accessible depuis n'importe quel PC** via interface web
-- **RAG (Retrieval Augmented Generation)** pour interroger vos documents
-- **Fine-tuning** de modèles personnalisés
-- **GPU acceleration** avec NVIDIA Quadro P4000
+🤖 Stack LLM 100% Native sur HP Z800 : Ollama + Client Distant + RAG + Fine-tuning
+
+## 🎯 Philosophie du Projet
+
+**Installation 100% NATIVE** - Pas de Docker, contrôle total, performance maximale.
+
+### Pourquoi Native ?
+
+- ✅ **0 overhead RAM** - Toute la RAM disponible pour les modèles
+- ✅ **Accès GPU direct** - Performance maximale pour fine-tuning
+- ✅ **Contrôle total du Swap** - Crucial avec 12 GB RAM
+- ✅ **Simplicité** - Pas de complexité Docker/containers
+- ✅ **Économie** - 1.5 GB RAM économisés vs Docker
+
+### Architecture
+
+```
+┌──────────────────────────────────────────┐
+│  Votre PC (Interface Utilisateur)        │
+├──────────────────────────────────────────┤
+│  • Msty / Jan (Interface graphique)      │
+│  • Scripts Python (automatisation)       │
+│  • VS Code Remote (développement)        │
+│    ↓                                      │
+│    └──→ API HTTP: 192.168.x.x:11434      │
+└──────────────────────────────────────────┘
+                    ↓ API REST
+┌──────────────────────────────────────────┐
+│  HP Z800 (Backend 100% Natif)            │
+├──────────────────────────────────────────┤
+│                                           │
+│  🔷 Ollama Native (Port 11434)           │
+│     ├─ mistral (Chat principal)          │
+│     ├─ nomic-embed-text (RAG)            │
+│     └─ Accès GPU direct                  │
+│                                           │
+│  🔷 Conda Environments (Disque 2)        │
+│     ├─ base (Python 3.x)                 │
+│     ├─ env1 (Python 3.x)                 │
+│     ├─ env2 (Python 3.x)                 │
+│     └─ finetuning (PyTorch + CUDA)       │
+│                                           │
+│  Resources:                               │
+│  • RAM disponible: ~11 GB (vs 9.5 Docker)│
+│  • GPU: Quadro P4000 8GB (100% perfs)    │
+│  • Swap: 8 GB configuré                  │
+│                                           │
+└──────────────────────────────────────────┘
+```
 
 ## 📊 Spécifications du Serveur
 
@@ -18,45 +61,13 @@ Transformer le HP Z800 en serveur d'IA local avec :
 | **CPU** | 2× Intel Xeon E5640 @ 2.67 GHz (8 cœurs, 16 threads) |
 | **RAM** | 12 GB DDR3 ECC |
 | **GPU** | NVIDIA Quadro P4000 (8 GB GDDR5, 1792 CUDA cores) |
-| **OS** | Ubuntu Server 22.04 LTS (noyau 6.8.0-40-generic HWE) |
+| **OS** | Ubuntu Server 22.04 LTS (noyau 6.8.0-40-generic) |
 | **Storage** | Disque 1: Système / Disque 2: Conda & ML |
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────┐
-│           HP Z800 (Serveur Local)               │
-├─────────────────────────────────────────────────┤
-│                                                  │
-│  🔷 Ollama (Port 11434)                         │
-│     ├─ mistral (LLM principal)                  │
-│     └─ nomic-embed-text (embeddings RAG)        │
-│                                                  │
-│  🔷 Open WebUI (Port 3000) [Docker]             │
-│     ├─ Interface chat web                       │
-│     ├─ Upload & gestion documents               │
-│     ├─ RAG automatique                          │
-│     └─ Collections de connaissances             │
-│                                                  │
-│  🔷 Conda Environments (Disque 2)               │
-│     └─ fine-tuning (PyTorch, Transformers)      │
-│                                                  │
-└─────────────────────────────────────────────────┘
-         ↑
-         │ http://IP-Z800:3000
-         │
-    [Votre PC - Navigateur Web]
-```
+| **Pilotes** | NVIDIA 535+ avec CUDA 12.x |
 
 ## 🚀 Installation Rapide
 
-### Prérequis
-- ✅ Ubuntu Server 22.04 LTS installé
-- ✅ Pilotes NVIDIA installés
-- ✅ Conda installé
-- ✅ Accès sudo
-
-### Installation Automatique
+### Sur le Serveur HP Z800
 
 ```bash
 # Cloner le projet
@@ -64,90 +75,143 @@ git clone https://github.com/VOTRE-USERNAME/hp-z800-ai-agent.git
 cd hp-z800-ai-agent
 
 # Lancer l'installation complète
-chmod +x scripts/install-all.sh
-./scripts/install-all.sh
+chmod +x scripts/install-all-native.sh
+./scripts/install-all-native.sh
+
+# L'IP du serveur sera affichée à la fin
+```
+
+### Sur Votre PC
+
+**Option A : Client Graphique (Recommandé)**
+
+```bash
+# Windows
+winget install Msty
+
+# macOS
+brew install --cask msty
+
+# Linux
+# Télécharger depuis https://msty.app
+```
+
+Puis configurer : `http://IP-DU-Z800:11434`
+
+**Option B : Scripts Python**
+
+```bash
+pip install requests
+python examples/chat-client.py
 ```
 
 ## 📚 Installation Manuelle (Étape par Étape)
 
-Si vous préférez installer manuellement, suivez ces guides dans l'ordre :
+Pour une installation contrôlée, suivez ces guides dans l'ordre :
 
-1. **[Préparation](docs/01-preparation.md)** - Vérifications système
-2. **[Installation Docker](docs/02-installation-docker.md)** - Docker & Docker Compose
-3. **[Installation Ollama](docs/03-installation-ollama.md)** - Backend LLM
-4. **[Installation Open WebUI](docs/04-installation-open-webui.md)** - Interface web
-5. **[Configuration RAG](docs/05-configuration-rag.md)** - Modèles d'embedding
-6. **[Accès Distant](docs/06-acces-distant.md)** - Configurer l'accès depuis votre PC
-7. **[Fine-tuning Setup](docs/07-finetuning-setup.md)** - Environnement pour fine-tuning
+1. **[Préparation Système](docs/01-preparation.md)** - Vérifications et prérequis
+2. **[Installation Ollama](docs/02-installation-ollama.md)** - Backend LLM natif
+3. **[Configuration Réseau](docs/03-configuration-reseau.md)** - Accès distant sécurisé
+4. **[Téléchargement Modèles](docs/04-download-models.md)** - Mistral + embeddings
+5. **[Installation Client PC](docs/05-client-pc.md)** - Msty, Jan ou scripts
+6. **[Configuration RAG](docs/06-configuration-rag.md)** - Documents et embeddings
+7. **[Setup Fine-tuning](docs/07-finetuning-setup.md)** - Environnement Conda
+8. **[Optimisation Swap](docs/08-optimisation-swap.md)** - Gestion mémoire
 
 ## 💡 Utilisation
 
-### Accès à l'Interface Web
+### Depuis Votre PC - Interface Graphique (Msty/Jan)
 
+1. Ouvrir Msty
+2. Settings → Ollama Server → `http://IP-Z800:11434`
+3. Sélectionner le modèle "mistral"
+4. Commencer à chatter !
+
+### Depuis Votre PC - Scripts Python
+
+```python
+# chat-simple.py
+import requests
+
+OLLAMA_URL = "http://192.168.1.XXX:11434"  # Votre IP Z800
+
+def ask_mistral(prompt):
+    response = requests.post(
+        f"{OLLAMA_URL}/api/generate",
+        json={
+            "model": "mistral",
+            "prompt": prompt,
+            "stream": False
+        }
+    )
+    return response.json()['response']
+
+# Utilisation
+result = ask_mistral("Qu'est-ce que le machine learning?")
+print(result)
 ```
-http://IP-DU-Z800:3000
-```
 
-**Première connexion** :
-1. Créer un compte (local, pas de cloud)
-2. Sélectionner le modèle "mistral"
-3. Commencer à discuter !
-
-### Upload de Documents (RAG)
-
-1. Cliquez sur **"+"** → **"Upload Files"**
-2. Sélectionnez vos fichiers (PDF, DOCX, TXT, MD, CSV)
-3. Le système indexe automatiquement
-4. Posez des questions sur vos documents !
-
-### API REST (pour scripts/intégrations)
+### API REST Directe
 
 ```bash
-# Génération de texte
-curl http://IP-DU-Z800:11434/api/generate -d '{
+# Depuis votre PC
+curl http://IP-Z800:11434/api/generate -d '{
   "model": "mistral",
-  "prompt": "Explique-moi le RAG",
+  "prompt": "Bonjour!",
   "stream": false
 }'
 ```
 
-```python
-# Client Python
-import requests
+## 🎓 Fonctionnalités
 
-def ask_mistral(prompt):
-    response = requests.post(
-        "http://IP-DU-Z800:11434/api/generate",
-        json={"model": "mistral", "prompt": prompt, "stream": False}
-    )
-    return response.json()['response']
+### Chat de Base
 
-print(ask_mistral("Qu'est-ce que le machine learning?"))
-```
-
-## 🎓 Fonctionnalités Avancées
+- ✅ Interface graphique moderne (Msty/Jan)
+- ✅ Scripts Python personnalisables
+- ✅ API REST compatible OpenAI
+- ✅ Streaming des réponses
+- ✅ Multi-modèles
 
 ### RAG (Retrieval Augmented Generation)
 
-Interrogez vos propres documents :
-- Documentation technique
-- Manuels d'utilisation
-- Articles de recherche
-- Notes personnelles
-- Bases de connaissances
+Interrogez vos documents :
 
-### Fine-tuning (À venir)
+```python
+# rag-query.py
+import requests
 
-Environnement Conda configuré pour :
+def rag_query(question, context):
+    prompt = f"""Contexte: {context}
+    
+Question: {question}
+
+Réponds en te basant uniquement sur le contexte fourni."""
+    
+    response = requests.post(
+        f"{OLLAMA_URL}/api/generate",
+        json={"model": "mistral", "prompt": prompt, "stream": False}
+    )
+    return response.json()['response']
+```
+
+Formats supportés :
+- PDF, DOCX, TXT, MD, CSV
+- Extraction automatique avec Python
+- Embeddings avec nomic-embed-text
+
+### Fine-tuning
+
+Environnement Conda dédié pour :
 - Fine-tuner Mistral sur vos données
 - Créer des modèles spécialisés
-- Entraîner des adapters LoRA
+- Entraîner des adapters LoRA/QLoRA
+- Utiliser tout le RAM + Swap (jusqu'à 20 GB)
 
 ```bash
 # Activer l'environnement
 conda activate finetuning
 
-# Voir docs/07-finetuning-setup.md pour plus de détails
+# Voir docs/07-finetuning-setup.md
 ```
 
 ## 📁 Structure du Projet
@@ -157,132 +221,185 @@ hp-z800-ai-agent/
 ├── README.md                      # Ce fichier
 ├── docs/                          # Documentation détaillée
 │   ├── 01-preparation.md
-│   ├── 02-installation-docker.md
-│   ├── 03-installation-ollama.md
-│   ├── 04-installation-open-webui.md
-│   ├── 05-configuration-rag.md
-│   ├── 06-acces-distant.md
+│   ├── 02-installation-ollama.md
+│   ├── 03-configuration-reseau.md
+│   ├── 04-download-models.md
+│   ├── 05-client-pc.md
+│   ├── 06-configuration-rag.md
 │   ├── 07-finetuning-setup.md
+│   ├── 08-optimisation-swap.md
 │   └── troubleshooting.md
 ├── scripts/                       # Scripts d'installation
-│   ├── install-all.sh            # Installation complète
-│   ├── install-docker.sh
-│   ├── install-ollama.sh
-│   ├── install-open-webui.sh
-│   ├── setup-finetuning-env.sh
-│   ├── test-gpu.sh
-│   └── monitor.sh
+│   ├── install-all-native.sh     # Installation complète
+│   ├── install-ollama.sh         # Ollama seul
+│   ├── configure-network.sh      # Configuration réseau
+│   ├── setup-swap.sh             # Configuration swap
+│   ├── setup-finetuning-env.sh   # Env Conda fine-tuning
+│   ├── test-gpu.sh               # Test NVIDIA
+│   └── monitor.sh                # Monitoring ressources
+├── examples/                      # Exemples client PC
+│   ├── chat-client.py            # Client CLI simple
+│   ├── chat-gui-streamlit.py     # Interface web légère
+│   ├── rag-pdf.py                # RAG avec PDFs
+│   ├── rag-documents.py          # RAG multi-documents
+│   └── batch-processing.py       # Traitement par lots
 ├── config/                        # Configurations
-│   ├── docker-compose.yml
-│   ├── ollama.service
-│   └── open-webui.env
-├── examples/                      # Exemples de code
-│   ├── api-chat.py
-│   ├── rag-query.py
-│   └── batch-processing.py
+│   ├── ollama.service            # Systemd service
+│   └── firewall-rules.sh         # Règles UFW
 └── logs/                          # Logs d'installation
     └── .gitkeep
-```
-
-## 🔧 Scripts Utiles
-
-```bash
-# Monitoring GPU en temps réel
-./scripts/monitor.sh
-
-# Test complet de la configuration
-./scripts/test-gpu.sh
-
-# Redémarrer tous les services
-docker restart open-webui
-sudo systemctl restart ollama
 ```
 
 ## 🛠️ Modèles Disponibles
 
 | Modèle | Taille | Usage | RAM Requise |
 |--------|--------|-------|-------------|
-| **mistral** | 4.1 GB | Chat principal | 8 GB |
-| **nomic-embed-text** | 274 MB | Embeddings RAG | 2 GB |
+| **mistral:7b** | 4.1 GB | Chat principal | 6 GB |
+| **mistral:instruct** | 4.1 GB | Instructions | 6 GB |
+| **nomic-embed-text** | 274 MB | Embeddings RAG | 1 GB |
 | llama3.2 | 2 GB | Alternative légère | 4 GB |
-| codellama | 3.8 GB | Code generation | 8 GB |
+| codellama:7b | 3.8 GB | Génération code | 6 GB |
+| deepseek-coder | 3.8 GB | Code spécialisé | 6 GB |
 
 ```bash
-# Télécharger un nouveau modèle
+# Télécharger un modèle
 ollama pull nom-du-modele
 
-# Lister les modèles installés
+# Lister les modèles
 ollama list
+
+# Supprimer un modèle
+ollama rm nom-du-modele
+```
+
+## 📊 Utilisation des Ressources
+
+### Comparaison Native vs Docker
+
+| Composant | Native | Docker | Économie |
+|-----------|--------|--------|----------|
+| Ollama + Mistral | 4.1 GB | 4.5 GB | 400 MB |
+| Interface | 0 MB* | 800 MB | 800 MB |
+| Runtime | 0 MB | 300 MB | 300 MB |
+| **Total utilisé** | **4.1 GB** | **5.6 GB** | **1.5 GB** |
+| **RAM disponible** | **~8 GB** | **~6.5 GB** | **+23%** |
+
+*Interface sur votre PC, pas sur le serveur
+
+### Configuration Optimale
+
+```bash
+# RAM physique: 12 GB
+# Ollama + modèles: ~4-5 GB
+# Système Ubuntu: ~1 GB
+# Disponible: ~6-7 GB
+
+# Swap recommandé: 8 GB
+# Total mémoire virtuelle: 20 GB
+# → Suffisant pour fine-tuning !
 ```
 
 ## 🔒 Sécurité
 
-### Configuration Firewall
+### Firewall Configuration
 
 ```bash
-# Autoriser uniquement votre IP
-sudo ufw allow from VOTRE-IP to any port 3000
-sudo ufw allow from VOTRE-IP to any port 11434
+# Autoriser uniquement votre PC
+sudo ufw allow from VOTRE-IP-PC to any port 11434
+sudo ufw allow 22/tcp  # SSH
 sudo ufw enable
 ```
 
-### Tunnel SSH (Alternative sécurisée)
+### Tunnel SSH (Alternative)
 
 ```bash
-# Depuis votre PC
-ssh -L 3000:localhost:3000 -L 11434:localhost:11434 user@IP-Z800
+# Depuis votre PC - Accès sécurisé sans ouvrir de ports
+ssh -L 11434:localhost:11434 user@IP-Z800
 
-# Puis accédez à http://localhost:3000
+# Puis utiliser: http://localhost:11434
+```
+
+### Réseau Local Uniquement
+
+```bash
+# Bind Ollama sur IP locale uniquement
+# Dans /etc/systemd/system/ollama.service.d/override.conf
+Environment="OLLAMA_HOST=192.168.1.XXX:11434"
 ```
 
 ## 📊 Monitoring
 
 ```bash
-# Vérifier l'utilisation GPU
+# GPU en temps réel
 watch -n 1 nvidia-smi
 
-# Logs Open WebUI
-docker logs -f open-webui
+# Utilisation ressources
+./scripts/monitor.sh
 
 # Logs Ollama
 sudo journalctl -u ollama -f
 
-# Statut des services
-docker ps
+# Statut service
 sudo systemctl status ollama
+```
+
+## 🔧 Scripts Utiles
+
+```bash
+# Test complet GPU + CUDA
+./scripts/test-gpu.sh
+
+# Configurer swap optimal
+./scripts/setup-swap.sh
+
+# Créer environnement fine-tuning
+./scripts/setup-finetuning-env.sh
+
+# Monitoring continu
+./scripts/monitor.sh
 ```
 
 ## 🆘 Dépannage
 
-### Problème : Open WebUI ne démarre pas
+### Problème : Impossible de se connecter depuis le PC
 
 ```bash
-docker logs open-webui
-docker restart open-webui
+# Sur le Z800 - Vérifier qu'Ollama écoute sur 0.0.0.0
+sudo netstat -tlnp | grep 11434
+# Devrait afficher: 0.0.0.0:11434
+
+# Vérifier le firewall
+sudo ufw status
+
+# Tester localement
+curl http://localhost:11434/api/tags
 ```
 
-### Problème : Modèle ne charge pas
+### Problème : Modèle trop lent
 
 ```bash
-# Vérifier l'espace disque
-df -h
-
-# Vérifier la mémoire
-free -h
-
-# Réinstaller le modèle
-ollama rm mistral
-ollama pull mistral
-```
-
-### Problème : GPU non utilisée
-
-```bash
-# Vérifier NVIDIA
+# Vérifier que GPU est utilisée
 nvidia-smi
 
-# Vérifier les variables d'environnement Ollama
-sudo systemctl show ollama | grep CUDA
+# Vérifier les variables CUDA
+env | grep CUDA
+
+# Forcer l'utilisation GPU
+export CUDA_VISIBLE_DEVICES=0
+sudo systemctl restart ollama
+```
+
+### Problème : Manque de mémoire
+
+```bash
+# Vérifier swap
+swapon --show
+
+# Augmenter swap (voir docs/08-optimisation-swap.md)
+./scripts/setup-swap.sh
+
+# Utiliser un modèle plus léger
+ollama pull llama3.2  # 2GB au lieu de 4GB
 ```
 
 Voir [docs/troubleshooting.md](docs/troubleshooting.md) pour plus de solutions.
@@ -290,38 +407,55 @@ Voir [docs/troubleshooting.md](docs/troubleshooting.md) pour plus de solutions.
 ## 📖 Ressources
 
 - [Documentation Ollama](https://github.com/ollama/ollama)
-- [Documentation Open WebUI](https://docs.openwebui.com)
-- [Guide RAG avec Ollama](https://ollama.com/blog/embedding-models)
-- [Fine-tuning LLMs](https://huggingface.co/docs/transformers/training)
+- [API Reference](https://github.com/ollama/ollama/blob/main/docs/api.md)
+- [Msty - Client PC](https://msty.app)
+- [Jan - Client alternatif](https://jan.ai)
+- [Guide Fine-tuning LLMs](https://huggingface.co/docs/transformers/training)
 
 ## 🤝 Contribution
 
-Ce projet documente l'installation complète d'une stack LLM sur ancien hardware workstation. N'hésitez pas à :
-- Signaler des bugs
-- Proposer des améliorations
-- Partager vos configurations
+Ce projet documente l'installation 100% native d'une stack LLM sur ancien hardware workstation. 
+
+**Objectifs** :
+- Maximiser les performances avec hardware limité
+- Éviter la complexité Docker
+- Contrôle total pour fine-tuning
+- Documentation détaillée pour reproductibilité
 
 ## 📝 License
 
 MIT
 
-## ✅ Roadmap
+## ✅ Checklist d'Installation
 
-- [x] Installation Ollama
-- [x] Installation Open WebUI
+### Sur le Serveur Z800
+- [ ] Ubuntu 22.04 à jour
+- [ ] Pilotes NVIDIA installés
+- [ ] Ollama installé en natif
+- [ ] Modèles téléchargés (mistral + nomic-embed-text)
+- [ ] Configuration réseau (0.0.0.0:11434)
+- [ ] Firewall configuré
+- [ ] Swap optimisé (8 GB)
+- [ ] Environnement Conda fine-tuning créé
+
+### Sur Votre PC
+- [ ] Msty ou Jan installé
+- [ ] Connexion au serveur configurée
+- [ ] Test de chat réussi
+- [ ] Scripts Python fonctionnels (optionnel)
+
+## 🎯 Roadmap
+
+- [x] Installation Ollama native
+- [x] Configuration accès distant
+- [x] Documentation client PC
 - [x] Configuration RAG
-- [x] Accès distant sécurisé
-- [ ] Fine-tuning environment
-- [ ] Datasets de fine-tuning
-- [ ] Modèles custom
-- [ ] API avancée
-- [ ] Monitoring dashboards
+- [ ] Setup fine-tuning complet
+- [ ] Datasets exemple
+- [ ] Guide LoRA/QLoRA
+- [ ] Scripts d'entraînement
+- [ ] Monitoring avancé
 
 ---
 
-**Fait avec ❤️ sur un HP Z800 de 2009 qui tourne encore comme une horloge**
-```bash
-# Vérification des pilotes NVIDIA
-nvidia-smi
-
-# Vérification des dis
+**⚡ Fait avec passion sur un HP Z800 de 2009 - Preuve que le vieux hardware peut encore servir !**
