@@ -1,7 +1,6 @@
 # hp-z800-ai-agent
 
 ## 🎯 Objectif du Projet
-# hp-z800-ai-agent
 
 🤖 Stack LLM 100% Native sur HP Z800 : Ollama + Client Distant + RAG + Fine-tuning
 
