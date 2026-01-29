@@ -110,7 +110,7 @@ Pour une installation contrôlée, suivez ces guides dans l'ordre :
 2. **[Installation Ollama](docs/02-installation-ollama.md)** - Backend LLM natif
 3. **[Configuration Réseau](docs/03-configuration-reseau.md)** - Accès distant sécurisé
 4. **[Installation Client PC](docs/04-client-pc.md)** - Msty, Jan ou scripts
-5. **Configuration RAG** *(à venir)* - Documents et embeddings
+5. **[Configuration RAG ](docs/05-configuration-rag.md)* - Documents et embeddings
 6. **Setup Fine-tuning** *(à venir)* - Environnement Conda
 7. **Optimisation Swap** *(à venir)* - Gestion mémoire
 
