@@ -1,7 +1,5 @@
 # hp-z800-ai-agent
 
-## 🎯 Objectif du Projet
-
 🤖 Stack LLM 100% Native sur HP Z800 : Ollama + Client Distant + RAG + Fine-tuning
 
 ## 🎯 Philosophie du Projet
@@ -111,54 +109,52 @@ Pour une installation contrôlée, suivez ces guides dans l'ordre :
 1. **[Préparation Système](docs/01-preparation.md)** - Vérifications et prérequis
 2. **[Installation Ollama](docs/02-installation-ollama.md)** - Backend LLM natif
 3. **[Configuration Réseau](docs/03-configuration-reseau.md)** - Accès distant sécurisé
-4. **[Téléchargement Modèles](docs/04-client-pc.md)** - Msty
-5. **[Installation Client PC](docs/05-client-pc.md)** - Msty, Jan ou scripts
-6. **[Configuration RAG](docs/06-configuration-rag.md)** - Documents et embeddings
-7. **[Setup Fine-tuning](docs/07-finetuning-setup.md)** - Environnement Conda
-8. **[Optimisation Swap](docs/08-optimisation-swap.md)** - Gestion mémoire
+4. **[Installation Client PC](docs/04-client-pc.md)** - Msty, Jan ou scripts
+5. **Configuration RAG** *(à venir)* - Documents et embeddings
+6. **Setup Fine-tuning** *(à venir)* - Environnement Conda
+7. **Optimisation Swap** *(à venir)* - Gestion mémoire
 
 ## 💡 Utilisation
 
-### Depuis Votre PC - Interface Graphique (Msty/Jan)
+### Accès à l'Interface Web
 
+```
+http://IP-DU-Z800:11434
+```
+
+**Depuis Msty :**
 1. Ouvrir Msty
 2. Settings → Ollama Server → `http://IP-Z800:11434`
 3. Sélectionner le modèle "mistral"
-4. Commencer à chatter !
+4. Commencer à discuter !
 
-### Depuis Votre PC - Scripts Python
+### Upload de Documents (RAG)
+
+*(Documentation à venir)*
+
+### API REST (pour scripts/intégrations)
+
+```bash
+# Génération de texte
+curl http://IP-DU-Z800:11434/api/generate -d '{
+  "model": "mistral",
+  "prompt": "Explique-moi le RAG",
+  "stream": false
+}'
+```
 
 ```python
-# chat-simple.py
+# Client Python
 import requests
-
-OLLAMA_URL = "http://192.168.1.XXX:11434"  # Votre IP Z800
 
 def ask_mistral(prompt):
     response = requests.post(
-        f"{OLLAMA_URL}/api/generate",
-        json={
-            "model": "mistral",
-            "prompt": prompt,
-            "stream": False
-        }
+        "http://IP-DU-Z800:11434/api/generate",
+        json={"model": "mistral", "prompt": prompt, "stream": False}
     )
     return response.json()['response']
 
-# Utilisation
-result = ask_mistral("Qu'est-ce que le machine learning?")
-print(result)
-```
-
-### API REST Directe
-
-```bash
-# Depuis votre PC
-curl http://IP-Z800:11434/api/generate -d '{
-  "model": "mistral",
-  "prompt": "Bonjour!",
-  "stream": false
-}'
+print(ask_mistral("Qu'est-ce que le machine learning?"))
 ```
 
 ## 🎓 Fonctionnalités
@@ -173,45 +169,23 @@ curl http://IP-Z800:11434/api/generate -d '{
 
 ### RAG (Retrieval Augmented Generation)
 
-Interrogez vos documents :
+*(Documentation à venir)*
 
-```python
-# rag-query.py
-import requests
-
-def rag_query(question, context):
-    prompt = f"""Contexte: {context}
-    
-Question: {question}
-
-Réponds en te basant uniquement sur le contexte fourni."""
-    
-    response = requests.post(
-        f"{OLLAMA_URL}/api/generate",
-        json={"model": "mistral", "prompt": prompt, "stream": False}
-    )
-    return response.json()['response']
-```
-
-Formats supportés :
-- PDF, DOCX, TXT, MD, CSV
-- Extraction automatique avec Python
-- Embeddings avec nomic-embed-text
+Interrogez vos propres documents :
+- Documentation technique
+- Manuels d'utilisation
+- Articles de recherche
+- Notes personnelles
+- Bases de connaissances
 
 ### Fine-tuning
 
-Environnement Conda dédié pour :
+*(Documentation à venir)*
+
+Environnement Conda configuré pour :
 - Fine-tuner Mistral sur vos données
 - Créer des modèles spécialisés
-- Entraîner des adapters LoRA/QLoRA
-- Utiliser tout le RAM + Swap (jusqu'à 20 GB)
-
-```bash
-# Activer l'environnement
-conda activate finetuning
-
-# Voir docs/07-finetuning-setup.md
-```
+- Entraîner des adapters LoRA
 
 ## 📁 Structure du Projet
 
@@ -222,29 +196,13 @@ hp-z800-ai-agent/
 │   ├── 01-preparation.md
 │   ├── 02-installation-ollama.md
 │   ├── 03-configuration-reseau.md
-│   ├── 04-download-models.md
-│   ├── 05-client-pc.md
-│   ├── 06-configuration-rag.md
-│   ├── 07-finetuning-setup.md
-│   ├── 08-optimisation-swap.md
-│   └── troubleshooting.md
+│   └── 04-client-pc.md
 ├── scripts/                       # Scripts d'installation
-│   ├── install-all-native.sh     # Installation complète
-│   ├── install-ollama.sh         # Ollama seul
-│   ├── configure-network.sh      # Configuration réseau
-│   ├── setup-swap.sh             # Configuration swap
-│   ├── setup-finetuning-env.sh   # Env Conda fine-tuning
-│   ├── test-gpu.sh               # Test NVIDIA
-│   └── monitor.sh                # Monitoring ressources
-├── examples/                      # Exemples client PC
-│   ├── chat-client.py            # Client CLI simple
-│   ├── chat-gui-streamlit.py     # Interface web légère
-│   ├── rag-pdf.py                # RAG avec PDFs
-│   ├── rag-documents.py          # RAG multi-documents
-│   └── batch-processing.py       # Traitement par lots
-├── config/                        # Configurations
-│   ├── ollama.service            # Systemd service
-│   └── firewall-rules.sh         # Règles UFW
+│   ├── validate-ollama.sh
+│   └── test-network-access.sh
+├── examples/                      # Exemples de code
+│   ├── chat-client.py
+│   └── rag-example.py
 └── logs/                          # Logs d'installation
     └── .gitkeep
 ```
@@ -253,109 +211,50 @@ hp-z800-ai-agent/
 
 | Modèle | Taille | Usage | RAM Requise |
 |--------|--------|-------|-------------|
-| **mistral:7b** | 4.1 GB | Chat principal | 6 GB |
-| **mistral:instruct** | 4.1 GB | Instructions | 6 GB |
+| **mistral** | 4.1 GB | Chat principal | 6 GB |
 | **nomic-embed-text** | 274 MB | Embeddings RAG | 1 GB |
 | llama3.2 | 2 GB | Alternative légère | 4 GB |
-| codellama:7b | 3.8 GB | Génération code | 6 GB |
-| deepseek-coder | 3.8 GB | Code spécialisé | 6 GB |
+| codellama | 3.8 GB | Code generation | 6 GB |
 
 ```bash
-# Télécharger un modèle
+# Télécharger un nouveau modèle
 ollama pull nom-du-modele
 
-# Lister les modèles
+# Lister les modèles installés
 ollama list
-
-# Supprimer un modèle
-ollama rm nom-du-modele
-```
-
-## 📊 Utilisation des Ressources
-
-### Comparaison Native vs Docker
-
-| Composant | Native | Docker | Économie |
-|-----------|--------|--------|----------|
-| Ollama + Mistral | 4.1 GB | 4.5 GB | 400 MB |
-| Interface | 0 MB* | 800 MB | 800 MB |
-| Runtime | 0 MB | 300 MB | 300 MB |
-| **Total utilisé** | **4.1 GB** | **5.6 GB** | **1.5 GB** |
-| **RAM disponible** | **~8 GB** | **~6.5 GB** | **+23%** |
-
-*Interface sur votre PC, pas sur le serveur
-
-### Configuration Optimale
-
-```bash
-# RAM physique: 12 GB
-# Ollama + modèles: ~4-5 GB
-# Système Ubuntu: ~1 GB
-# Disponible: ~6-7 GB
-
-# Swap recommandé: 8 GB
-# Total mémoire virtuelle: 20 GB
-# → Suffisant pour fine-tuning !
 ```
 
 ## 🔒 Sécurité
 
-### Firewall Configuration
+### Configuration Firewall
 
 ```bash
-# Autoriser uniquement votre PC
-sudo ufw allow from VOTRE-IP-PC to any port 11434
-sudo ufw allow 22/tcp  # SSH
+# Autoriser uniquement votre IP
+sudo ufw allow from VOTRE-IP to any port 11434
+sudo ufw allow from VOTRE-IP to any port 11434
 sudo ufw enable
 ```
 
-### Tunnel SSH (Alternative)
+### Tunnel SSH (Alternative sécurisée)
 
 ```bash
-# Depuis votre PC - Accès sécurisé sans ouvrir de ports
+# Depuis votre PC
 ssh -L 11434:localhost:11434 user@IP-Z800
 
-# Puis utiliser: http://localhost:11434
-```
-
-### Réseau Local Uniquement
-
-```bash
-# Bind Ollama sur IP locale uniquement
-# Dans /etc/systemd/system/ollama.service.d/override.conf
-Environment="OLLAMA_HOST=192.168.1.XXX:11434"
+# Puis accédez à http://localhost:11434
 ```
 
 ## 📊 Monitoring
 
 ```bash
-# GPU en temps réel
+# Vérifier l'utilisation GPU
 watch -n 1 nvidia-smi
-
-# Utilisation ressources
-./scripts/monitor.sh
 
 # Logs Ollama
 sudo journalctl -u ollama -f
 
-# Statut service
+# Statut des services
 sudo systemctl status ollama
-```
-
-## 🔧 Scripts Utiles
-
-```bash
-# Test complet GPU + CUDA
-./scripts/test-gpu.sh
-
-# Configurer swap optimal
-./scripts/setup-swap.sh
-
-# Créer environnement fine-tuning
-./scripts/setup-finetuning-env.sh
-
-# Monitoring continu
-./scripts/monitor.sh
 ```
 
 ## 🆘 Dépannage
@@ -363,45 +262,16 @@ sudo systemctl status ollama
 ### Problème : Impossible de se connecter depuis le PC
 
 ```bash
-# Sur le Z800 - Vérifier qu'Ollama écoute sur 0.0.0.0
-sudo netstat -tlnp | grep 11434
-# Devrait afficher: 0.0.0.0:11434
-
-# Vérifier le firewall
+# Sur le serveur
+sudo ss -tlnp | grep 11434
 sudo ufw status
-
-# Tester localement
 curl http://localhost:11434/api/tags
+
+# Depuis le PC
+ping IP-DU-Z800
 ```
 
-### Problème : Modèle trop lent
-
-```bash
-# Vérifier que GPU est utilisée
-nvidia-smi
-
-# Vérifier les variables CUDA
-env | grep CUDA
-
-# Forcer l'utilisation GPU
-export CUDA_VISIBLE_DEVICES=0
-sudo systemctl restart ollama
-```
-
-### Problème : Manque de mémoire
-
-```bash
-# Vérifier swap
-swapon --show
-
-# Augmenter swap (voir docs/08-optimisation-swap.md)
-./scripts/setup-swap.sh
-
-# Utiliser un modèle plus léger
-ollama pull llama3.2  # 2GB au lieu de 4GB
-```
-
-Voir [docs/troubleshooting.md](docs/troubleshooting.md) pour plus de solutions.
+Voir la documentation complète dans chaque fichier `docs/`.
 
 ## 📖 Ressources
 
@@ -431,14 +301,13 @@ MIT
 - [ ] Ubuntu 22.04 à jour
 - [ ] Pilotes NVIDIA installés
 - [ ] Ollama installé en natif
-- [ ] Modèles téléchargés (mistral + nomic-embed-text)
+- [ ] Modèles téléchargés (mistral)
 - [ ] Configuration réseau (0.0.0.0:11434)
 - [ ] Firewall configuré
 - [ ] Swap optimisé (8 GB)
-- [ ] Environnement Conda fine-tuning créé
 
 ### Sur Votre PC
-- [ ] Msty ou Jan installé
+- [ ] Msty installé
 - [ ] Connexion au serveur configurée
 - [ ] Test de chat réussi
 - [ ] Scripts Python fonctionnels (optionnel)
@@ -447,8 +316,8 @@ MIT
 
 - [x] Installation Ollama native
 - [x] Configuration accès distant
-- [x] Documentation client PC
-- [x] Configuration RAG
+- [x] Documentation client PC (Msty)
+- [ ] Configuration RAG
 - [ ] Setup fine-tuning complet
 - [ ] Datasets exemple
 - [ ] Guide LoRA/QLoRA
