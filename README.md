@@ -111,7 +111,7 @@ Pour une installation contrôlée, suivez ces guides dans l'ordre :
 1. **[Préparation Système](docs/01-preparation.md)** - Vérifications et prérequis
 2. **[Installation Ollama](docs/02-installation-ollama.md)** - Backend LLM natif
 3. **[Configuration Réseau](docs/03-configuration-reseau.md)** - Accès distant sécurisé
-4. **[Téléchargement Modèles](docs/04-client-pc.md)** - Mistral + embeddings
+4. **[Téléchargement Modèles](docs/04-client-pc.md)** - Msty
 5. **[Installation Client PC](docs/05-client-pc.md)** - Msty, Jan ou scripts
 6. **[Configuration RAG](docs/06-configuration-rag.md)** - Documents et embeddings
 7. **[Setup Fine-tuning](docs/07-finetuning-setup.md)** - Environnement Conda
