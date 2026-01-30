@@ -111,8 +111,9 @@ Pour une installation contrôlée, suivez ces guides dans l'ordre :
 3. **[Configuration Réseau](docs/03-configuration-reseau.md)** - Accès distant sécurisé
 4. **[Installation Client PC](docs/04-client-pc.md)** - Msty, Jan ou scripts
 5. **[Configuration RAG ](docs/05-configuration-rag.md)** - Documents et embeddings
-6. **Setup Fine-tuning** *(à venir)* - Environnement Conda
-7. **Optimisation Swap** *(à venir)* - Gestion mémoire
+6. **[RAG Avancé avec ChromaDB](docs/06-rag-avance-chromadb.md)** - RAG Avancé
+7. **Setup Fine-tuning** *(à venir)* - Environnement Conda
+8. **Optimisation Swap** *(à venir)* - Gestion mémoire
 
 ## 💡 Utilisation
 
