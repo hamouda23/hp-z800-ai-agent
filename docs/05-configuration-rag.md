@@ -503,7 +503,8 @@ Selon le document, les spécifications du HP Z800 sont:
 # Copier vos documents dans le dossier
 cp /chemin/vers/vos/documents/*.pdf ~/hp-z800-ai-agent/rag/documents/
 cp /chemin/vers/vos/documents/*.docx ~/hp-z800-ai-agent/rag/documents/
-
+# Si le PDF est dans Téléchargements :
+scp "$env:USERPROFILE\Downloads\Python code for Artificial Intelligence Foundations of Computational Agents.pdf" samir@192.168.1.108:~/hp-z800-ai-agent/rag/documents/
 # Lancer le RAG
 cd ~/hp-z800-ai-agent/rag/scripts
 python simple_rag.py "Votre question ici"
