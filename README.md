@@ -270,6 +270,9 @@ curl http://localhost:11434/api/tags
 
 # Depuis le PC
 ping IP-DU-Z800
+
+# Changement d'adresse IP
+sudo ufw allow from 192.168.0.0/24 to any port 11434 proto tcp
 ```
 
 Voir la documentation complète dans chaque fichier `docs/`.
