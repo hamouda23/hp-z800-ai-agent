@@ -299,35 +299,6 @@ Ce projet documente l'installation 100% native d'une stack LLM sur ancien hardwa
 
 MIT
 
-## ✅ Checklist d'Installation
-
-### Sur le Serveur Z800
-- [ ] Ubuntu 22.04 à jour
-- [ ] Pilotes NVIDIA installés
-- [ ] Ollama installé en natif
-- [ ] Modèles téléchargés (mistral)
-- [ ] Configuration réseau (0.0.0.0:11434)
-- [ ] Firewall configuré
-- [ ] Swap optimisé (8 GB)
-
-### Sur Votre PC
-- [ ] Msty installé
-- [ ] Connexion au serveur configurée
-- [ ] Test de chat réussi
-- [ ] Scripts Python fonctionnels (optionnel)
-
-## 🎯 Roadmap
-
-- [x] Installation Ollama native
-- [x] Configuration accès distant
-- [x] Documentation client PC (Msty)
-- [ ] Configuration RAG
-- [ ] Setup fine-tuning complet
-- [ ] Datasets exemple
-- [ ] Guide LoRA/QLoRA
-- [ ] Scripts d'entraînement
-- [ ] Monitoring avancé
-
 ---
 
 **⚡ Fait avec passion sur un HP Z800 de 2009 - Preuve que le vieux hardware peut encore servir !**
